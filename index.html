@@ -8,13 +8,16 @@
     <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="manifest" href="public/manifest.json" />
+    
+    <!-- Relatywna ścieżka do manifestu -->
+    <link rel="manifest" href="./public/manifest.json" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc; /* slate-50 */
+        background-color: #f8fafc;
         -webkit-tap-highlight-color: transparent;
         margin: 0;
         padding: 0;
@@ -38,12 +41,36 @@
         50% { opacity: 1; }
         100% { opacity: 0.5; }
       }
-      @media print {
-        .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        body { background-color: white; }
+      /* Debugger console for mobile */
+      #mobile-error-log {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.9);
+        color: #ff5555;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 10px;
+        z-index: 9999;
+        max-height: 30vh;
+        overflow-y: auto;
       }
     </style>
+    
+    <script>
+      // Debugger dla kolegi - jeśli coś wybuchnie, zobaczy to na ekranie
+      window.onerror = function(msg, url, line, col, error) {
+        var log = document.getElementById('mobile-error-log');
+        if (log) {
+          log.style.display = 'block';
+          log.innerHTML += '<div>' + msg + ' (L:' + line + ')</div>';
+        }
+        return false;
+      };
+    </script>
+
     <script type="importmap">
     {
       "imports": {
@@ -56,19 +83,21 @@
       }
     }
     </script>
-    <!-- CRITICAL: Ładowanie głównego pliku aplikacji -->
-    <script type="module" src="index.tsx"></script>
   </head>
   <body>
     <div id="root"></div>
+    <div id="mobile-error-log"></div>
+
+    <!-- Używamy relatywnej ścieżki ./ -->
+    <script type="module" src="./index.tsx"></script>
+
     <script>
-      // Poprawiona rejestracja Service Workera dla GitHub Pages
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Używamy ścieżki bez ./ na początku dla lepszej obsługi subdomen
-          navigator.serviceWorker.register('public/sw.js', { scope: './' })
-            .then(reg => console.log('Matownik SW Registered!'))
-            .catch(err => console.log('SW registration failed: ', err));
+          // Relatywna ścieżka do SW
+          navigator.serviceWorker.register('./public/sw.js')
+            .then(reg => console.log('Matownik SW OK'))
+            .catch(err => console.error('SW Error', err));
         });
       }
     </script>

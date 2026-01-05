@@ -3,7 +3,7 @@
   "name": "Matownik - Dziennik Trenera",
   "short_name": "Matownik",
   "description": "Aplikacja do zarządzania frekwencją dla trenerów sportów walki.",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
