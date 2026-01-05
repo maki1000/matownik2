@@ -40,8 +40,8 @@ import {
   ArrowRight,
   Github
 } from 'lucide-react';
-import { AppData, Group, Person, Session, AttendanceRecord, AttendanceStatus } from './types';
-import { loadData, saveData, generateId, isPolishHoliday, getStatusLabel } from './services/storageService';
+import { AppData, Group, Person, Session, AttendanceRecord, AttendanceStatus } from './types.ts';
+import { loadData, saveData, generateId, isPolishHoliday, getStatusLabel } from './services/storageService.ts';
 
 // --- Context for global state ---
 const AppContext = React.createContext<{
@@ -134,7 +134,6 @@ const CalendarView = ({
 
 // --- Main App Components ---
 
-// Fix: Implemented Sidebar component for navigation
 const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -192,7 +191,6 @@ const Sidebar = () => {
   );
 };
 
-// Fix: Implemented Dashboard component to show stats and calendar
 const Dashboard = () => {
   const { data } = useContext(AppContext);
   const navigate = useNavigate();
@@ -268,7 +266,6 @@ const Dashboard = () => {
   );
 };
 
-// Fix: Implemented GroupManager component
 const GroupManager = () => {
   const { data, updateData } = useContext(AppContext);
   const [isAdding, setIsAdding] = useState(false);
@@ -357,7 +354,6 @@ const GroupManager = () => {
   );
 };
 
-// Fix: Implemented PlayerManager component
 const PlayerManager = () => {
   const { data, updateData } = useContext(AppContext);
   const [isAdding, setIsAdding] = useState(false);
@@ -475,7 +471,6 @@ const PlayerManager = () => {
   );
 };
 
-// Fix: Implemented TrainingManager component
 const TrainingManager = () => {
   const { data, updateData } = useContext(AppContext);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
@@ -684,7 +679,6 @@ const TrainingManager = () => {
   );
 };
 
-// Fix: Implemented Reports component
 const Reports = () => {
   const { data } = useContext(AppContext);
 
