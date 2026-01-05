@@ -1,9 +1,0 @@
-
-{
-  "appId": "pl.matownik.app",
-  "appName": "Matownik",
-  "webDir": "www",
-  "server": {
-    "androidScheme": "https"
-  }
-}

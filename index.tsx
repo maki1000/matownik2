@@ -1,11 +1,10 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Nie znaleziono elementu root w dokumencie.");
+  throw new Error("Could not find root element to mount to");
 }
 
 const root = ReactDOM.createRoot(rootElement);
