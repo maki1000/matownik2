@@ -21,7 +21,9 @@ import {
   MoreVertical, 
   Pencil, 
   Save, 
-  CalendarDays 
+  CalendarDays,
+  Smartphone,
+  Info
 } from 'lucide-react';
 import { AppData, Group, Person, Session, AttendanceRecord, AttendanceStatus } from './types';
 import { loadData, saveData, generateId, isPolishHoliday, getStatusLabel } from './services/storageService';
@@ -53,7 +55,6 @@ const CalendarView = ({
   };
 
   const getFirstDayOfMonth = (year: number, month: number) => {
-    // 0 = Sunday, 1 = Monday. We want Monday to be first cols usually in PL
     let day = new Date(year, month, 1).getDay();
     return day === 0 ? 6 : day - 1; 
   };
@@ -90,7 +91,6 @@ const CalendarView = ({
           const dateStr = `${viewDate.getFullYear()}-${(viewDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
           const isToday = new Date().toISOString().split('T')[0] === dateStr;
           
-          // Check sessions
           const daySessions = sessions.filter(s => s.date === dateStr);
           const hasTraining = daySessions.some(s => s.type === 'CLASS');
           const hasCompetition = daySessions.some(s => s.type === 'COMPETITION');
@@ -214,7 +214,6 @@ const EditPlayerModal = ({
 const Sidebar = () => {
   const location = useLocation();
   
-  // Full list for desktop
   const desktopNavItems = [
     { icon: BarChart3, label: 'Pulpit', path: '/' },
     { icon: Users, label: 'Grupy', path: '/groups' },
@@ -224,7 +223,6 @@ const Sidebar = () => {
     { icon: Settings, label: 'Ustawienia', path: '/settings' },
   ];
 
-  // Simplified list for mobile (top bar) - ONLY Pulpit and Raporty as requested
   const mobileNavItems = [
     { icon: BarChart3, label: 'Pulpit', path: '/' },
     { icon: FileText, label: 'Raporty', path: '/reports' },
@@ -232,7 +230,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <div className="hidden md:flex w-64 bg-white border-r border-slate-200 flex-shrink-0 h-screen flex-col no-print fixed left-0 top-0 bottom-0 z-30">
         <div className="p-6 border-b border-slate-100 flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">M</div>
@@ -259,7 +256,6 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      {/* Mobile Top Bar */}
       <div className="md:hidden bg-white border-b border-slate-200 fixed top-0 left-0 right-0 z-30 no-print w-full">
         <div className="flex items-center justify-between px-4 py-3 max-w-full">
            <div className="flex items-center gap-2">
@@ -288,7 +284,6 @@ const Sidebar = () => {
         </div>
       </div>
       
-      {/* Spacer for Mobile Header */}
       <div className="md:hidden h-[64px]"></div>
     </>
   );
@@ -298,7 +293,6 @@ const Dashboard = () => {
   const { data } = React.useContext(AppContext);
   const navigate = useNavigate();
 
-  // Calculate stats
   const totalPlayers = data.people.length;
   const totalSessions = data.sessions.length;
   const totalGroups = data.groups.length;
@@ -308,8 +302,6 @@ const Dashboard = () => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
-    
-    // Navigate to training with pre-selected date
     navigate('/training', { state: { date: dateStr } });
   };
   
@@ -320,7 +312,6 @@ const Dashboard = () => {
         <p className="text-slate-500">Twoje centrum dowodzenia.</p>
       </header>
 
-      {/* Calendar Activity Section moved to the top per user request */}
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-800">Kalendarz Aktywności</h3>
@@ -328,16 +319,13 @@ const Dashboard = () => {
         </div>
         <CalendarView 
           currentDate={new Date()} 
-          sessions={data.sessions} // Show all sessions from all groups
+          sessions={data.sessions} 
           onDateSelect={handleDateSelect}
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div 
-          onClick={() => navigate('/groups')}
-          className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
-        >
+        <div onClick={() => navigate('/groups')} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-slate-500">Twoje Grupy</p>
@@ -352,10 +340,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div 
-          onClick={() => navigate('/players')}
-          className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
-        >
+        <div onClick={() => navigate('/players')} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-slate-500">Zawodnicy</p>
@@ -370,10 +355,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div 
-           onClick={() => navigate('/training')}
-           className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
-        >
+        <div onClick={() => navigate('/training')} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm font-medium text-slate-500">Treningi</p>
@@ -388,13 +370,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
-       {/* Settings Link for Mobile (since removed from top nav) */}
-       <div className="md:hidden text-center pt-4 pb-8">
-         <Link to="/settings" className="text-sm text-slate-400 hover:text-slate-600 underline">
-           Przejdź do ustawień
-         </Link>
-       </div>
     </div>
   );
 };
@@ -408,11 +383,7 @@ const GroupManager = () => {
   const addGroup = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGroupName.trim()) return;
-    
-    const newGroup: Group = {
-      id: generateId(),
-      name: newGroupName,
-    };
+    const newGroup: Group = { id: generateId(), name: newGroupName };
     updateData({ groups: [...data.groups, newGroup] });
     setNewGroupName('');
   };
@@ -435,96 +406,50 @@ const GroupManager = () => {
   };
 
   const deleteGroup = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const updatedGroups = data.groups.filter(g => g.id !== id);
-    const updatedPeople = data.people.filter(p => p.groupId !== id);
-    const updatedSessions = data.sessions.filter(s => s.groupId !== id);
-    const updatedRecords = data.records.filter(r => data.sessions.find(s => s.id === r.sessionId)?.groupId !== id);
-
+    e.preventDefault(); e.stopPropagation();
     updateData({
-      groups: updatedGroups,
-      people: updatedPeople,
-      sessions: updatedSessions,
-      records: updatedRecords
+      groups: data.groups.filter(g => g.id !== id),
+      people: data.people.filter(p => p.groupId !== id),
+      sessions: data.sessions.filter(s => s.groupId !== id),
+      records: data.records.filter(r => data.sessions.find(s => s.id === r.sessionId)?.groupId !== id)
     });
   };
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto pb-24 w-full">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Zarządzanie Grupami</h2>
-      
       <div className="bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm mb-6">
         <form onSubmit={addGroup} className="flex flex-col md:flex-row gap-3">
-          <input
-            type="text"
-            value={newGroupName}
-            onChange={e => setNewGroupName(e.target.value)}
-            placeholder="Nazwa nowej grupy (np. Kadra A)..."
-            className="flex-1 px-4 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button type="submit" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-            <Plus size={20} /> Dodaj
-          </button>
+          <input type="text" value={newGroupName} onChange={e => setNewGroupName(e.target.value)} placeholder="Nazwa nowej grupy (np. Kadra A)..." className="flex-1 px-4 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <button type="submit" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"><Plus size={20} /> Dodaj</button>
         </form>
       </div>
-
       <div className="space-y-3">
         {data.groups.map(group => {
-          const memberCount = data.people.filter(p => p.groupId === group.id).length;
           const isEditing = editingId === group.id;
-
           return (
             <div key={group.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
               {isEditing ? (
                  <div className="flex-1 flex items-center gap-2 mr-2">
-                    <input 
-                      value={editName}
-                      onChange={e => setEditName(e.target.value)}
-                      className="flex-1 px-3 py-2 bg-slate-800 text-white rounded-lg outline-none"
-                      autoFocus
-                    />
-                    <button onClick={() => saveEdit(group.id)} className="p-2 bg-green-100 text-green-600 rounded-lg">
-                      <Save size={20} />
-                    </button>
-                    <button onClick={cancelEdit} className="p-2 bg-slate-100 text-slate-600 rounded-lg">
-                      <X size={20} />
-                    </button>
+                    <input value={editName} onChange={e => setEditName(e.target.value)} className="flex-1 px-3 py-2 bg-slate-800 text-white rounded-lg outline-none" autoFocus />
+                    <button onClick={() => saveEdit(group.id)} className="p-2 bg-green-100 text-green-600 rounded-lg"><Save size={20} /></button>
+                    <button onClick={cancelEdit} className="p-2 bg-slate-100 text-slate-600 rounded-lg"><X size={20} /></button>
                  </div>
               ) : (
                 <div className="flex-1">
                   <h3 className="font-bold text-lg text-slate-800">{group.name}</h3>
-                  <p className="text-slate-500 text-sm">{memberCount} zawodników</p>
+                  <p className="text-slate-500 text-sm">{data.people.filter(p => p.groupId === group.id).length} zawodników</p>
                 </div>
               )}
-              
               {!isEditing && (
                 <div className="flex gap-2">
-                   <button 
-                    onClick={() => startEdit(group)}
-                    className="p-4 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors"
-                    title="Edytuj grupę"
-                  >
-                    <Pencil size={24} />
-                  </button>
-                  <button 
-                    onClick={(e) => deleteGroup(e, group.id)}
-                    className="p-4 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors active:bg-red-200"
-                    title="Usuń grupę"
-                  >
-                    <Trash2 size={24} className="pointer-events-none" />
-                  </button>
+                   <button onClick={() => startEdit(group)} className="p-4 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors"><Pencil size={24} /></button>
+                   <button onClick={(e) => deleteGroup(e, group.id)} className="p-4 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors active:bg-red-200"><Trash2 size={24} className="pointer-events-none" /></button>
                 </div>
               )}
             </div>
           )
         })}
-        {data.groups.length === 0 && (
-          <div className="text-center py-12 text-slate-400 bg-slate-100 rounded-xl border-dashed border-2 border-slate-200">
-            Brak grup. Dodaj pierwszą powyżej.
-          </div>
-        )}
       </div>
     </div>
   );
@@ -533,481 +458,158 @@ const GroupManager = () => {
 const PlayerManager = () => {
   const { data, updateData } = React.useContext(AppContext);
   const [editingPlayer, setEditingPlayer] = useState<Person | null>(null);
-  
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    birthYear: '',
-    groupId: ''
-  });
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', birthYear: '', groupId: '' });
+  const [filterGroupId, setFilterGroupId] = useState<string>('ALL');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.firstName || !formData.lastName) return;
-
-    let targetGroupId = formData.groupId;
-    if (!targetGroupId && data.groups.length > 0) {
-      targetGroupId = data.groups[0].id;
-    }
-    
-    if (!targetGroupId) {
-      alert("Musisz najpierw utworzyć grupę!");
-      return;
-    }
-
-    const newPerson: Person = {
-      id: generateId(),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      birthYear: formData.birthYear,
-      groupId: targetGroupId
-    };
-
+    let targetGroupId = formData.groupId || (data.groups.length > 0 ? data.groups[0].id : '');
+    if (!targetGroupId) { alert("Musisz najpierw utworzyć grupę!"); return; }
+    const newPerson: Person = { id: generateId(), firstName: formData.firstName, lastName: formData.lastName, birthYear: formData.birthYear, groupId: targetGroupId };
     updateData({ people: [...data.people, newPerson] });
     setFormData({ firstName: '', lastName: '', birthYear: '', groupId: targetGroupId });
   };
 
-  const deletePerson = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Direct delete without confirmation
-    updateData({ people: data.people.filter(p => p.id !== id) });
-  };
-
-  const handleUpdatePlayer = (updatedPerson: Person) => {
-    const updatedPeople = data.people.map(p => p.id === updatedPerson.id ? updatedPerson : p);
-    updateData({ people: updatedPeople });
-    setEditingPlayer(null);
-  };
-
-  const [filterGroupId, setFilterGroupId] = useState<string>('ALL');
   const filteredPeople = data.people.filter(p => filterGroupId === 'ALL' || p.groupId === filterGroupId);
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto pb-24 w-full">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Baza Zawodników</h2>
-
-      {/* Add Player Form */}
       <div className="bg-white p-4 md:p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
-        <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
-          <UserPlus size={20} /> Dodaj Nowego Zawodnika
-        </h3>
+        <h3 className="font-semibold text-slate-700 mb-4 flex items-center gap-2"><UserPlus size={20} /> Dodaj Nowego Zawodnika</h3>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <div className="md:col-span-1">
-            <input
-              type="text"
-              placeholder="Imię"
-              value={formData.firstName}
-              onChange={e => setFormData({...formData, firstName: e.target.value})}
-              className="w-full px-3 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              required
-            />
-          </div>
-          <div className="md:col-span-1">
-             <input
-              type="text"
-              placeholder="Nazwisko"
-              value={formData.lastName}
-              onChange={e => setFormData({...formData, lastName: e.target.value})}
-              className="w-full px-3 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              required
-            />
-          </div>
-          <div className="md:col-span-1">
-             <input
-              type="number"
-              placeholder="Rocznik"
-              value={formData.birthYear}
-              onChange={e => setFormData({...formData, birthYear: e.target.value})}
-              className="w-full px-3 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-          <div className="md:col-span-1">
-            <select
-              value={formData.groupId}
-              onChange={e => setFormData({...formData, groupId: e.target.value})}
-              className="w-full px-3 py-3 border border-slate-600 bg-slate-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              <option value="" disabled className="text-slate-400">Wybierz grupę</option>
-              {data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-            </select>
-          </div>
-          <button type="submit" className="bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors py-3">
-            Dodaj
-          </button>
+          <input type="text" placeholder="Imię" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="px-3 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg outline-none" required />
+          <input type="text" placeholder="Nazwisko" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="px-3 py-3 border border-slate-600 bg-slate-800 text-white placeholder-slate-400 rounded-lg outline-none" required />
+          <input type="number" placeholder="Rocznik" value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="px-3 py-3 border border-slate-600 bg-slate-800 text-white rounded-lg outline-none" />
+          <select value={formData.groupId} onChange={e => setFormData({...formData, groupId: e.target.value})} className="px-3 py-3 border border-slate-600 bg-slate-800 text-white rounded-lg outline-none">
+            <option value="" disabled>Wybierz grupę</option>
+            {data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+          </select>
+          <button type="submit" className="bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 py-3">Dodaj</button>
         </form>
       </div>
-
-      {/* List */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-          <h3 className="font-bold text-slate-800 self-start md:self-center">Lista Zawodników ({filteredPeople.length})</h3>
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <span className="text-sm text-slate-500 whitespace-nowrap">Filtruj:</span>
-            <select 
-              value={filterGroupId}
-              onChange={(e) => setFilterGroupId(e.target.value)}
-              className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 outline-none focus:border-blue-500 bg-white"
-            >
-              <option value="ALL">Wszyscy</option>
-              {data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-            </select>
-          </div>
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center gap-4">
+          <h3 className="font-bold text-slate-800">Lista ({filteredPeople.length})</h3>
+          <select value={filterGroupId} onChange={(e) => setFilterGroupId(e.target.value)} className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white outline-none">
+            <option value="ALL">Wszyscy</option>
+            {data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+          </select>
         </div>
-
-        {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-3">Nazwisko i Imię</th>
-                <th className="px-6 py-3">Rocznik</th>
-                <th className="px-6 py-3">Grupa</th>
-                <th className="px-6 py-3 text-right">Akcje</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredPeople
-                .sort((a, b) => a.lastName.localeCompare(b.lastName))
-                .map(person => {
-                  const groupName = data.groups.find(g => g.id === person.groupId)?.name || '-';
-                  return (
-                    <tr key={person.id} className="bg-white hover:bg-slate-50">
-                      <td className="px-6 py-3 font-medium text-slate-900">
-                        {person.lastName} {person.firstName}
-                      </td>
-                      <td className="px-6 py-3 text-slate-600">{person.birthYear || '-'}</td>
-                      <td className="px-6 py-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {groupName}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-right">
-                         <div className="flex justify-end gap-2">
-                            <button onClick={() => setEditingPlayer(person)} className="text-slate-400 hover:text-yellow-600 transition-colors p-2">
-                              <Pencil size={18} />
-                            </button>
-                            <button onClick={(e) => deletePerson(e, person.id)} className="text-slate-400 hover:text-red-600 transition-colors p-2">
-                              <Trash2 size={18} className="pointer-events-none" />
-                            </button>
-                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filteredPeople.length === 0 && (
-                  <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400">Brak zawodników.</td></tr>
-                )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Card List */}
-        <div className="md:hidden divide-y divide-slate-100">
-           {filteredPeople
-              .sort((a, b) => a.lastName.localeCompare(b.lastName))
-              .map(person => {
-                const groupName = data.groups.find(g => g.id === person.groupId)?.name || '-';
-                return (
-                  <div key={person.id} className="p-4 flex justify-between items-center bg-white active:bg-slate-50">
-                    <div>
-                      <div className="font-bold text-slate-900">{person.lastName} {person.firstName}</div>
-                      <div className="text-sm text-slate-500 flex items-center gap-2 mt-1">
-                        <span>{person.birthYear || 'Rocznik brak'}</span>
-                        <span className="text-slate-300">•</span>
-                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{groupName}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => setEditingPlayer(person)} 
-                        className="p-4 text-yellow-600 bg-yellow-50 rounded-lg active:bg-yellow-100 transition-colors"
-                      >
-                        <Pencil size={24} />
-                      </button>
-                      <button 
-                        onClick={(e) => deletePerson(e, person.id)} 
-                        className="p-4 text-red-500 bg-red-50 rounded-lg active:bg-red-100 transition-colors"
-                      >
-                        <Trash2 size={24} className="pointer-events-none" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            {filteredPeople.length === 0 && (
-              <div className="p-8 text-center text-slate-400 text-sm">Brak zawodników.</div>
-            )}
+        <div className="divide-y divide-slate-100">
+          {filteredPeople.sort((a,b) => a.lastName.localeCompare(b.lastName)).map(person => (
+            <div key={person.id} className="p-4 flex justify-between items-center bg-white active:bg-slate-50">
+              <div>
+                <div className="font-bold text-slate-900">{person.lastName} {person.firstName}</div>
+                <div className="text-xs text-slate-500 mt-1">{person.birthYear || 'Rocznik brak'} • {data.groups.find(g => g.id === person.groupId)?.name}</div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setEditingPlayer(person)} className="p-4 text-yellow-600 bg-yellow-50 rounded-lg"><Pencil size={24} /></button>
+                <button onClick={() => updateData({ people: data.people.filter(p => p.id !== person.id) })} className="p-4 text-red-500 bg-red-50 rounded-lg"><Trash2 size={24} /></button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {editingPlayer && (
-        <EditPlayerModal 
-          person={editingPlayer} 
-          groups={data.groups} 
-          onClose={() => setEditingPlayer(null)}
-          onSave={handleUpdatePlayer}
-        />
-      )}
+      {editingPlayer && <EditPlayerModal person={editingPlayer} groups={data.groups} onClose={() => setEditingPlayer(null)} onSave={(up) => { updateData({ people: data.people.map(p => p.id === up.id ? up : p) }); setEditingPlayer(null); }} />}
     </div>
   );
 };
 
-// --- Training Logic ---
-
 const TrainingManager = () => {
   const { data, updateData } = React.useContext(AppContext);
   const location = useLocation();
-  
-  // State
   const [view, setView] = useState<'CALENDAR' | 'ATTENDANCE'>('CALENDAR');
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [currentSession, setCurrentSession] = useState<Session | null>(null);
-  
-  // Temporary state for checking
   const [localRecords, setLocalRecords] = useState<Record<string, AttendanceStatus>>({});
   const [isCompetition, setIsCompetition] = useState(false);
 
-  // Initialize Group - select first available if not set
-  useEffect(() => {
-    if (!selectedGroupId && data.groups.length > 0) {
-      setSelectedGroupId(data.groups[0].id);
-    }
-  }, [data.groups]);
+  useEffect(() => { if (!selectedGroupId && data.groups.length > 0) setSelectedGroupId(data.groups[0].id); }, [data.groups]);
 
-  // Handle navigation from Dashboard with pre-selected date
   useEffect(() => {
     if (location.state?.date && data.groups.length > 0) {
       const dateStr = location.state.date;
-      
-      // Attempt to find a group that has a session on this day, otherwise use first group
       let targetGroupId = data.groups[0].id;
       const sessionOnDate = data.sessions.find(s => s.date === dateStr);
-      if (sessionOnDate) {
-        targetGroupId = sessionOnDate.groupId;
-      }
-
+      if (sessionOnDate) targetGroupId = sessionOnDate.groupId;
       setSelectedGroupId(targetGroupId);
       handleDateSelect(new Date(dateStr), targetGroupId);
-      // Clear state to prevent re-triggering on re-renders if needed, though simpler to leave as is for now
     }
   }, [location.state, data.groups]);
 
-  // Helper to trigger attendance view manually or via effect
   const handleDateSelect = (date: Date, groupIdOverride?: string) => {
     const groupId = groupIdOverride || selectedGroupId;
     if (!groupId) return;
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    
+    const dateStr = date.toISOString().split('T')[0];
     setSelectedDate(dateStr);
-
-    // Check if session exists
-    const existingSession = data.sessions.find(s => s.groupId === groupId && s.date === dateStr);
-    
-    if (existingSession) {
-      setCurrentSession(existingSession);
-      setIsCompetition(existingSession.type === 'COMPETITION');
-      
-      // Load records
+    const existing = data.sessions.find(s => s.groupId === groupId && s.date === dateStr);
+    if (existing) {
+      setCurrentSession(existing); setIsCompetition(existing.type === 'COMPETITION');
       const records: Record<string, AttendanceStatus> = {};
       data.people.filter(p => p.groupId === groupId).forEach(p => {
-        const rec = data.records.find(r => r.sessionId === existingSession.id && r.personId === p.id);
+        const rec = data.records.find(r => r.sessionId === existing.id && r.personId === p.id);
         records[p.id] = rec ? rec.status : AttendanceStatus.ABSENT;
       });
       setLocalRecords(records);
     } else {
-      // New Session
-      setCurrentSession(null);
-      setIsCompetition(false); // Default to training
-      
-      // Default ALL ABSENT
+      setCurrentSession(null); setIsCompetition(false);
       const records: Record<string, AttendanceStatus> = {};
-      data.people.filter(p => p.groupId === groupId).forEach(p => {
-        records[p.id] = AttendanceStatus.ABSENT;
-      });
+      data.people.filter(p => p.groupId === groupId).forEach(p => records[p.id] = AttendanceStatus.ABSENT);
       setLocalRecords(records);
     }
-    
     setView('ATTENDANCE');
   };
 
-  const toggleAttendance = (personId: string) => {
-    setLocalRecords(prev => ({
-      ...prev,
-      [personId]: prev[personId] === AttendanceStatus.PRESENT ? AttendanceStatus.ABSENT : AttendanceStatus.PRESENT
-    }));
-  };
-
   const save = () => {
-    if (!selectedGroupId) return;
-
-    let sessionId = currentSession?.id;
+    let sessionId = currentSession?.id || generateId();
     let newSessions = [...data.sessions];
-    let newRecords = [...data.records];
-
-    if (!currentSession) {
-      // Create Session
-      sessionId = generateId();
-      const session: Session = {
-        id: sessionId,
-        groupId: selectedGroupId,
-        date: selectedDate,
-        type: isCompetition ? 'COMPETITION' : 'CLASS'
-      };
-      newSessions.push(session);
-    } else {
-       // Update Type if changed
-       const idx = newSessions.findIndex(s => s.id === currentSession.id);
-       if (idx > -1) newSessions[idx] = { ...newSessions[idx], type: isCompetition ? 'COMPETITION' : 'CLASS' };
-       
-       // Remove old records for this session to overwrite
-       newRecords = newRecords.filter(r => r.sessionId !== sessionId);
-    }
-
-    // Add records
-    const recordsToAdd = Object.entries(localRecords).map(([pid, status]) => ({
-      id: generateId(),
-      sessionId: sessionId!,
-      personId: pid,
-      status: status
-    }));
-    
-    updateData({
-      sessions: newSessions,
-      records: [...newRecords, ...recordsToAdd]
-    });
-
+    if (!currentSession) newSessions.push({ id: sessionId, groupId: selectedGroupId, date: selectedDate, type: isCompetition ? 'COMPETITION' : 'CLASS' });
+    else { const idx = newSessions.findIndex(s => s.id === currentSession.id); if (idx > -1) newSessions[idx] = { ...newSessions[idx], type: isCompetition ? 'COMPETITION' : 'CLASS' }; }
+    const recordsToAdd = Object.entries(localRecords).map(([pid, status]) => ({ id: generateId(), sessionId, personId: pid, status }));
+    updateData({ sessions: newSessions, records: [...data.records.filter(r => r.sessionId !== sessionId), ...recordsToAdd] });
     setView('CALENDAR');
   };
 
-  // Guard: No Groups
-  if (data.groups.length === 0) {
-     return (
-      <div className="p-8 text-center text-slate-500">
-        <p className="mb-4">Nie masz jeszcze żadnych grup.</p>
-        <Link to="/groups" className="text-blue-600 font-bold underline">Dodaj grupę</Link>
-      </div>
-     )
-  }
-
-  // VIEW: Calendar
   if (view === 'CALENDAR') {
-    const groupSessions = data.sessions.filter(s => s.groupId === selectedGroupId);
     return (
       <div className="p-4 md:p-8 max-w-lg mx-auto pb-24 w-full">
-        <div className="mb-6">
-           <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Wybierz Grupę</label>
-           <div className="relative">
-             <select 
-              value={selectedGroupId}
-              onChange={(e) => setSelectedGroupId(e.target.value)}
-              className="w-full appearance-none bg-white border border-slate-200 text-slate-800 text-lg font-bold py-3 px-4 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-             >
-               {data.groups.map(g => (
-                 <option key={g.id} value={g.id}>{g.name}</option>
-               ))}
-             </select>
-             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-               <ChevronRight className="rotate-90" size={20} />
-             </div>
-           </div>
-        </div>
-        
-        <CalendarView 
-          currentDate={new Date()} 
-          sessions={groupSessions}
-          onDateSelect={(d) => handleDateSelect(d)}
-        />
+        <select value={selectedGroupId} onChange={(e) => setSelectedGroupId(e.target.value)} className="w-full bg-white border border-slate-200 text-lg font-bold py-3 px-4 rounded-xl mb-6 shadow-sm outline-none">
+          {data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+        </select>
+        <CalendarView currentDate={new Date()} sessions={data.sessions.filter(s => s.groupId === selectedGroupId)} onDateSelect={(d) => handleDateSelect(d)} />
       </div>
     );
   }
 
-  // VIEW: Attendance
-  const group = data.groups.find(g => g.id === selectedGroupId);
   const people = data.people.filter(p => p.groupId === selectedGroupId).sort((a, b) => a.lastName.localeCompare(b.lastName));
   const presentCount = Object.values(localRecords).filter(s => s === AttendanceStatus.PRESENT).length;
 
   return (
     <div className="p-4 pb-32 max-w-3xl mx-auto w-full">
        <div className="flex items-center justify-between mb-4 sticky top-0 bg-slate-50 z-20 py-2">
-         <button onClick={() => setView('CALENDAR')} className="flex items-center text-slate-600 hover:text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
-           <ChevronLeft size={20} /> Wróć
-         </button>
-         <div className="text-right">
-           <h3 className="font-bold text-slate-800">{new Date(selectedDate).toLocaleDateString('pl-PL')}</h3>
-           <p className="text-xs text-slate-500">{group?.name}</p>
-         </div>
+         <button onClick={() => setView('CALENDAR')} className="flex items-center text-slate-600 bg-white px-3 py-2 rounded-lg border border-slate-200"><ChevronLeft size={20} /> Wróć</button>
+         <div className="text-right"><h3 className="font-bold text-slate-800">{new Date(selectedDate).toLocaleDateString('pl-PL')}</h3><p className="text-xs text-slate-500">{data.groups.find(g=>g.id===selectedGroupId)?.name}</p></div>
        </div>
-
-       {/* Toggle Type */}
-       <div className="bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex mb-6">
-         <button 
-           onClick={() => setIsCompetition(false)}
-           className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 ${!isCompetition ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'text-slate-400'}`}
-         >
-           <Dumbbell size={18} /> Trening
-         </button>
-         <button 
-           onClick={() => setIsCompetition(true)}
-           className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 ${isCompetition ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'text-slate-400'}`}
-         >
-           <Trophy size={18} /> Zawody
-         </button>
+       <div className="bg-white p-1.5 rounded-xl border border-slate-200 flex mb-6 shadow-sm">
+         <button onClick={() => setIsCompetition(false)} className={`flex-1 py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 ${!isCompetition ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'text-slate-400'}`}><Dumbbell size={18} /> Trening</button>
+         <button onClick={() => setIsCompetition(true)} className={`flex-1 py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 ${isCompetition ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'text-slate-400'}`}><Trophy size={18} /> Zawody</button>
        </div>
-
-       {/* Stats */}
-       <div className="flex justify-between items-center px-2 mb-4">
-         <span className="text-slate-500 font-medium text-sm">Lista obecności</span>
-         <span className={`px-3 py-1 rounded-full text-sm font-bold ${presentCount === people.length ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-700'}`}>
-           {presentCount} / {people.length}
-         </span>
-       </div>
-
-       {/* List */}
+       <div className="flex justify-between items-center px-2 mb-4"><span className="text-slate-500 font-medium">Lista obecności</span><span className="px-3 py-1 rounded-full text-sm font-bold bg-slate-200">{presentCount} / {people.length}</span></div>
        <div className="space-y-2">
          {people.map(person => {
            const isPresent = localRecords[person.id] === AttendanceStatus.PRESENT;
            return (
-             <div 
-               key={person.id}
-               onClick={() => toggleAttendance(person.id)}
-               className={`p-4 rounded-xl border cursor-pointer flex justify-between items-center transition-all select-none active:scale-[0.98]
-                 ${isPresent ? 'bg-white border-green-200 shadow-sm' : 'bg-slate-100 border-transparent opacity-60 grayscale'}
-               `}
-             >
-                <div>
-                  <p className={`font-bold text-lg ${isPresent ? 'text-slate-800' : 'text-slate-500'}`}>
-                    {person.lastName} {person.firstName}
-                  </p>
-                  <p className="text-xs text-slate-400">{person.birthYear}</p>
-                </div>
-                
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${isPresent ? 'bg-green-500 text-white shadow-md shadow-green-200 scale-100' : 'bg-slate-200 text-slate-400 scale-90'}`}>
-                  {isPresent ? <Check size={28} strokeWidth={3} /> : <X size={24} />}
-                </div>
+             <div key={person.id} onClick={() => setLocalRecords(prev => ({ ...prev, [person.id]: isPresent ? AttendanceStatus.ABSENT : AttendanceStatus.PRESENT }))} className={`p-4 rounded-xl border cursor-pointer flex justify-between items-center transition-all active:scale-[0.98] ${isPresent ? 'bg-white border-green-200 shadow-sm' : 'bg-slate-100 border-transparent opacity-60'}`}>
+                <div><p className={`font-bold text-lg ${isPresent ? 'text-slate-800' : 'text-slate-500'}`}>{person.lastName} {person.firstName}</p><p className="text-xs text-slate-400">{person.birthYear}</p></div>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isPresent ? 'bg-green-500 text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}>{isPresent ? <Check size={28} strokeWidth={3} /> : <X size={24} />}</div>
              </div>
            );
          })}
-         {people.length === 0 && (
-           <div className="text-center py-10 text-slate-400">Brak zawodników w tej grupie.</div>
-         )}
        </div>
-
-       {/* Sticky Footer */}
-       <div className="fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-white border-t border-slate-200 z-30 shadow-[0_-4px_6_rgba(0,0,0,0.05)]">
-         <button 
-           onClick={save}
-           className="w-full py-4 bg-green-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-green-200 active:bg-green-700 transition-all"
-         >
-           Zapisz {isCompetition ? 'Zawody' : 'Trening'}
-         </button>
-       </div>
+       <div className="fixed bottom-0 left-0 md:left-64 right-0 p-4 bg-white border-t border-slate-200 z-30"><button onClick={save} className="w-full py-4 bg-green-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-green-200">Zapisz</button></div>
     </div>
   );
 };
@@ -1015,185 +617,32 @@ const TrainingManager = () => {
 const Reports = () => {
   const { data } = React.useContext(AppContext);
   const [selectedGroupId, setSelectedGroupId] = useState<string>(data.groups[0]?.id || '');
-  
-  // Date range state
-  const todayStr = new Date().toISOString().split('T')[0];
-  const firstDayOfMonthStr = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
-  
-  const [startDate, setStartDate] = useState<string>(firstDayOfMonthStr);
-  const [endDate, setEndDate] = useState<string>(todayStr);
-  
-  // Reset selection if groups change
-  useEffect(() => {
-    if (!data.groups.find(g => g.id === selectedGroupId) && data.groups.length > 0) {
-      setSelectedGroupId(data.groups[0].id);
-    }
-  }, [data.groups]);
+  const [startDate, setStartDate] = useState<string>(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
   
   const group = data.groups.find(g => g.id === selectedGroupId);
-  const people = data.people.filter(p => p.groupId === selectedGroupId).sort((a, b) => a.lastName.localeCompare(b.lastName));
-  
-  // Filter sessions by group and date range
-  const sessions = data.sessions
-    .filter(s => {
-      const matchGroup = s.groupId === selectedGroupId;
-      const matchStart = !startDate || s.date >= startDate;
-      const matchEnd = !endDate || s.date <= endDate;
-      return matchGroup && matchStart && matchEnd;
-    })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const people = data.people.filter(p => p.groupId === selectedGroupId).sort((a,b) => a.lastName.localeCompare(b.lastName));
+  const sessions = data.sessions.filter(s => s.groupId === selectedGroupId && s.date >= startDate && s.date <= endDate).sort((a,b) => a.date.localeCompare(b.date));
 
   const exportCSV = () => {
-    if (!group) return;
-    
-    let csvContent = "data:text/csv;charset=utf-8,\ufeff"; 
-    
-    const headers = ["Nazwisko", "Imię", "Rocznik", ...sessions.map(s => s.date)];
-    csvContent += headers.join(";") + "\n";
-
-    people.forEach(person => {
-      const row = [person.lastName, person.firstName, person.birthYear || ''];
-      sessions.forEach(session => {
-        const rec = data.records.find(r => r.sessionId === session.id && r.personId === person.id);
-        // Change: 'X' for present, empty for absent
-        const label = rec?.status === AttendanceStatus.PRESENT ? 'X' : ''; 
-        row.push(label);
-      });
-      csvContent += row.join(";") + "\n";
+    let csv = "data:text/csv;charset=utf-8,\ufeffNazwisko;Imię;Rocznik;" + sessions.map(s => s.date).join(";") + "\n";
+    people.forEach(p => {
+      let row = [p.lastName, p.firstName, p.birthYear || ''];
+      sessions.forEach(s => row.push(data.records.find(r => r.sessionId === s.id && r.personId === p.id)?.status === AttendanceStatus.PRESENT ? 'X' : ''));
+      csv += row.join(";") + "\n";
     });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Raport_${group.name}_${startDate || 'poczatek'}_do_${endDate || 'dzis'}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `Raport_${group?.name}.csv`; link.click();
   };
 
   return (
     <div className="p-4 md:p-8 max-w-full mx-auto pb-24 w-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 no-print gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">Raporty</h2>
-        <div className="flex gap-2 w-full md:w-auto">
-          <button onClick={exportCSV} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-sm shadow-green-200">
-             <Download size={16} /> Pobierz CSV
-          </button>
-        </div>
-      </div>
-
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 no-print gap-4"><h2 className="text-2xl font-bold text-slate-800">Raporty</h2><button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow-green-200"><Download size={16} /> Pobierz CSV</button></div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2 no-print">
-        <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Wybierz grupę</label>
-          <div className="relative">
-            <select 
-              value={selectedGroupId} 
-              onChange={(e) => setSelectedGroupId(e.target.value)}
-              className="w-full appearance-none bg-white border border-slate-200 text-slate-800 py-3 px-4 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {data.groups.map(g => (
-                <option key={g.id} value={g.id}>{g.name}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-               <ChevronRight className="rotate-90" size={16} />
-            </div>
-          </div>
-        </div>
-
-        <div>
-           <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Data od</label>
-           <div className="relative">
-              <input 
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full bg-white border border-slate-200 text-slate-800 py-3 px-4 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-           </div>
-        </div>
-
-        <div>
-           <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Data do</label>
-           <div className="relative">
-              <input 
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full bg-white border border-slate-200 text-slate-800 py-3 px-4 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-           </div>
-        </div>
+        <select value={selectedGroupId} onChange={(e) => setSelectedGroupId(e.target.value)} className="w-full bg-white border border-slate-200 py-3 px-4 rounded-xl shadow-sm outline-none">{data.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
+        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full bg-white border border-slate-200 py-3 px-4 rounded-xl shadow-sm outline-none" />
+        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full bg-white border border-slate-200 py-3 px-4 rounded-xl shadow-sm outline-none" />
       </div>
-
-      {group ? (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-          <div className="overflow-x-auto w-full"> 
-            <table className="w-full text-sm text-left border-collapse min-w-max">
-              <thead>
-                <tr>
-                  <th className="py-3 px-4 border-b-2 border-slate-100 bg-slate-50 font-semibold text-slate-700 sticky left-0 bg-slate-50 z-20 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] align-bottom">
-                    <div className="pb-2">Zawodnik</div>
-                  </th>
-                  {sessions.map(s => (
-                    <th key={s.id} className="px-1 border-b-2 border-slate-100 bg-slate-50 font-medium text-slate-600 text-center min-w-[36px] h-[140px] align-bottom pb-2 relative group">
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center justify-end w-8">
-                         <span className="whitespace-nowrap -rotate-90 origin-center text-[11px] mb-2 block font-mono text-slate-500">
-                            {new Date(s.date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' })}
-                         </span>
-                         {s.type === 'COMPETITION' && <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" title="Zawody"></div>}
-                      </div>
-                    </th>
-                  ))}
-                  <th className="py-3 px-2 border-b-2 border-slate-100 bg-slate-50 font-bold text-slate-700 text-center min-w-[50px] align-bottom pb-4">%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {people.map(person => {
-                  let present = 0;
-                  let total = sessions.length;
-
-                  return (
-                    <tr key={person.id} className="border-b border-slate-50 hover:bg-slate-50">
-                      <td className="py-2 px-4 font-medium text-slate-900 sticky left-0 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
-                        {person.lastName} {person.firstName}
-                      </td>
-                      {sessions.map(session => {
-                        const record = data.records.find(r => r.sessionId === session.id && r.personId === person.id);
-                        const isPresent = record?.status === AttendanceStatus.PRESENT;
-                        if (isPresent) present++;
-
-                        return (
-                          <td key={session.id} className="py-2 px-1 text-center">
-                            {isPresent ? (
-                              <div className="w-3 h-3 bg-green-500 rounded-full mx-auto"></div>
-                            ) : (
-                              <div className="w-1.5 h-1.5 bg-slate-200 rounded-full mx-auto"></div>
-                            )}
-                          </td>
-                        );
-                      })}
-                      <td className="py-2 px-2 text-center font-bold text-slate-700">
-                        {total > 0 ? Math.round((present / total) * 100) : 0}%
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {sessions.length === 0 && (
-            <div className="py-12 text-center text-slate-400 bg-slate-50/50 flex flex-col items-center gap-2">
-              <CalendarDays size={48} className="text-slate-200" />
-              <p>Brak treningów w wybranym zakresie dat.</p>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="text-center py-12 text-slate-400 bg-white rounded-xl border border-slate-200">
-          Brak grup do wyświetlenia.
-        </div>
-      )}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto"><table className="w-full text-sm text-left border-collapse min-w-max"><thead><tr><th className="py-3 px-4 border-b-2 border-slate-100 bg-slate-50 font-semibold text-slate-700 sticky left-0 z-20">Zawodnik</th>{sessions.map(s => (<th key={s.id} className="px-1 border-b-2 border-slate-100 bg-slate-50 font-medium text-slate-600 text-center min-w-[36px] h-[100px] align-bottom pb-2"><div className="whitespace-nowrap -rotate-90 origin-center text-[11px] mb-2">{s.date.split('-').slice(1).reverse().join('.')}</div></th>))}<th className="py-3 px-2 border-b-2 border-slate-100 bg-slate-50 font-bold text-slate-700 text-center">%</th></tr></thead><tbody>{people.map(p => { let pres = sessions.filter(s => data.records.find(r => r.sessionId === s.id && r.personId === p.id)?.status === AttendanceStatus.PRESENT).length; return (<tr key={p.id} className="border-b border-slate-50"><td className="py-2 px-4 font-medium text-slate-900 sticky left-0 bg-white">{p.lastName} {p.firstName}</td>{sessions.map(s => (<td key={s.id} className="py-2 px-1 text-center">{data.records.find(r => r.sessionId === s.id && r.personId === p.id)?.status === AttendanceStatus.PRESENT ? <div className="w-3 h-3 bg-green-500 rounded-full mx-auto" /> : <div className="w-1.5 h-1.5 bg-slate-200 rounded-full mx-auto" />}</td>))}<td className="py-2 px-2 text-center font-bold text-slate-700">{sessions.length > 0 ? Math.round((pres / sessions.length) * 100) : 0}%</td></tr>); })}</tbody></table></div>
     </div>
   );
 };
@@ -1201,46 +650,40 @@ const Reports = () => {
 const SettingsPage = () => {
   return (
     <div className="p-4 md:p-8 max-w-2xl mx-auto space-y-6 pb-24 w-full">
-      <h2 className="text-2xl font-bold text-slate-800">Ustawienia</h2>
+      <h2 className="text-2xl font-bold text-slate-800">Ustawienia i Pomoc</h2>
       
+      {/* iOS Installation Instruction Card */}
+      <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-lg shadow-blue-200">
+        <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+          <Smartphone size={24} /> Jak zainstalować na iPhone?
+        </h3>
+        <ol className="list-decimal list-inside space-y-2 text-blue-50 font-medium">
+          <li>Otwórz Matownik w przeglądarce <b>Safari</b>.</li>
+          <li>Kliknij ikonę <b>Udostępnij</b> (kwadrat ze strzałką w górę) na dole ekranu.</li>
+          <li>Wybierz opcję <b>Dodaj do ekranu początkowego</b>.</li>
+          <li>Kliknij <b>Dodaj</b> w prawym górnym rogu.</li>
+        </ol>
+        <p className="mt-4 text-xs opacity-80 flex items-center gap-2 italic">
+          <Info size={14} /> Od teraz Matownik będzie dostępny jako aplikacja na Twoim pulpicie!
+        </p>
+      </div>
+
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <h3 className="font-bold text-lg mb-2 text-slate-800">Twoje Dane</h3>
-        <p className="text-sm text-slate-500 mb-4">
-          Aplikacja działa w 100% offline. Dane są zapisywane w pamięci Twojego telefonu/przeglądarki.
-        </p>
-        <button 
-          onClick={() => {
-            if (window.confirm("UWAGA: To usunie WSZYSTKIE dane z aplikacji (Grupy, Zawodnicy, Treningi). Kontynuować?")) {
-              localStorage.clear();
-              window.location.reload();
-            }
-          }} 
-          className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition"
-        >
-          <Trash2 size={16} /> Resetuj Aplikację
-        </button>
+        <p className="text-sm text-slate-500 mb-4">Aplikacja działa w 100% offline. Dane są zapisywane w pamięci urządzenia.</p>
+        <button onClick={() => { if (window.confirm("UWAGA: To usunie WSZYSTKIE dane. Kontynuować?")) { localStorage.clear(); window.location.reload(); } }} className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 bg-red-50 rounded-lg"><Trash2 size={16} /> Resetuj Aplikację</button>
       </div>
 
       <div className="text-center text-xs text-slate-400 mt-8">
-        <p>Matownik v4.0 - PWA (Zainstaluj na Androidzie)</p>
-        <p>Stworzono dla polskich trenerów 🇵🇱</p>
+        <p>Matownik v4.2 - Polska aplikacja dla trenerów 🇵🇱</p>
       </div>
     </div>
   );
 };
 
-// --- Main App Container ---
-
 export default function App() {
   const [data, setDataState] = useState<AppData>(loadData);
-
-  const updateData = (newData: Partial<AppData>) => {
-    setDataState(prev => {
-      const next = { ...prev, ...newData };
-      saveData(next);
-      return next;
-    });
-  };
+  const updateData = (newData: Partial<AppData>) => { setDataState(prev => { const next = { ...prev, ...newData }; saveData(next); return next; }); };
 
   return (
     <AppContext.Provider value={{ data, updateData }}>

@@ -4,10 +4,15 @@
   <head>
     <meta charset="utf-8" />
     <title>Matownik - Dziennik Treningowy</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#2563eb" />
+    
+    <!-- iOS support -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Matownik" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2921/2921226.png" />
+    
     <link rel="manifest" href="./public/manifest.json" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,6 +22,8 @@
         background-color: #f8fafc; /* slate-50 */
         -webkit-tap-highlight-color: transparent;
         user-select: none;
+        /* Padding for iOS safe area (bottom navigation) */
+        padding-bottom: env(safe-area-inset-bottom);
       }
       @media print {
         .no-print { display: none !important; }
