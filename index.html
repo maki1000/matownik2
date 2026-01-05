@@ -19,10 +19,9 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc; /* slate-50 */
+        background-color: #f8fafc;
         -webkit-tap-highlight-color: transparent;
         user-select: none;
-        /* Padding for iOS safe area (bottom navigation) */
         padding-bottom: env(safe-area-inset-bottom);
       }
       @media print {
@@ -31,27 +30,25 @@
         body { background-color: white; }
       }
       .print-only { display: none; }
-      
-      /* Smooth scrolling for mobile */
-      * {
-        -webkit-overflow-scrolling: touch;
-      }
+      * { -webkit-overflow-scrolling: touch; }
     </style>
     <script type="importmap">
-    {
-      "imports": {
-        "react/": "https://aistudiocdn.com/react@^19.2.0/",
-        "react": "https://aistudiocdn.com/react@^19.2.0",
-        "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
-        "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@7.0.0?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
