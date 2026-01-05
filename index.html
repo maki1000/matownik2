@@ -14,8 +14,14 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2921/2921226.png" />
     
     <link rel="manifest" href="./public/manifest.json" />
+    
+    <!-- Skrypty zewnętrzne -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Babel Standalone: Pozwala uruchamiać .tsx bezpośrednio w przeglądarce na GitHub Pages -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -32,6 +38,7 @@
       .print-only { display: none; }
       * { -webkit-overflow-scrolling: touch; }
     </style>
+
     <script type="importmap">
 {
   "imports": {
@@ -48,12 +55,23 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Główny punkt wejścia aplikacji -->
-    <script type="module" src="./index.tsx"></script>
+
+    <!-- 
+      Zmieniamy typ na text/babel, aby Babel Standalone mógł przetworzyć kod TypeScript.
+      data-type="module" jest kluczowe, aby importy z importmap działały.
+      data-presets="react,typescript" mówi Babelowi, jakich transformacji użyć.
+    -->
+    <script type="text/babel" data-type="module" data-presets="react,typescript" src="./index.tsx"></script>
+
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./public/sw.js').catch(err => {
+          // GitHub Pages potrzebuje poprawnej ścieżki do Service Workera
+          const swPath = window.location.pathname.includes('matownik') 
+            ? '/matownik/public/sw.js' 
+            : './public/sw.js';
+          
+          navigator.serviceWorker.register(swPath).catch(err => {
             console.log('SW registration failed: ', err);
           });
         });
