@@ -1,6 +1,7 @@
-import { AppData, AttendanceStatus } from '../types';
 
-const STORAGE_KEY = 'obecnosc_app_data_v2'; // Bumped version due to schema changes
+import { AppData, AttendanceStatus } from '../types.ts';
+
+const STORAGE_KEY = 'obecnosc_app_data_v2'; 
 
 const INITIAL_DATA: AppData = {
   groups: [
@@ -15,7 +16,7 @@ const INITIAL_DATA: AppData = {
   ],
   sessions: [],
   records: [],
-  isPro: true, // PRO enabled by default
+  isPro: true, 
 };
 
 export const loadData = (): AppData => {
@@ -25,7 +26,6 @@ export const loadData = (): AppData => {
       return INITIAL_DATA;
     }
     const parsed = JSON.parse(stored);
-    // Ensure PRO is true even if loading old data for this user
     return { ...parsed, isPro: true };
   } catch (e) {
     console.error("Failed to load data", e);
@@ -44,15 +44,15 @@ export const saveData = (data: AppData) => {
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
 const POLISH_HOLIDAYS = [
-  '01-01', // Nowy Rok
-  '01-06', // Trzech Króli
-  '05-01', // Święto Pracy
-  '05-03', // Konstytucja 3 Maja
-  '08-15', // Wniebowzięcie NMP
-  '11-01', // Wszystkich Świętych
-  '11-11', // Niepodległości
-  '12-25', // Bożego Narodzenia
-  '12-26', // Bożego Narodzenia
+  '01-01', 
+  '01-06', 
+  '05-01', 
+  '05-03', 
+  '08-15', 
+  '11-01', 
+  '11-11', 
+  '12-25', 
+  '12-26', 
 ];
 
 export const isPolishHoliday = (date: Date): boolean => {
@@ -73,7 +73,7 @@ export const getStatusLabel = (status: AttendanceStatus) => {
 export const getStatusColor = (status: AttendanceStatus) => {
   switch (status) {
     case AttendanceStatus.PRESENT: return 'bg-green-100 text-green-800 border-green-200';
-    case AttendanceStatus.ABSENT: return 'bg-red-50 text-red-400 border-red-100 opacity-60'; // Dimmed for absent
+    case AttendanceStatus.ABSENT: return 'bg-red-50 text-red-400 border-red-100 opacity-60'; 
     default: return 'bg-gray-100 text-gray-800';
   }
 };
