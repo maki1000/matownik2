@@ -1,0 +1,5 @@
+{
+  "name": "Matownik",
+  "description": "Polska aplikacja do zarządzania frekwencją dla trenerów sportów walki. Działa offline.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,18 @@
+
+{
+  "name": "matownik-coach-app",
+  "version": "4.1.0",
+  "dependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/cli": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2"
+  },
+  "scripts": {
+    "build-mobile": "mkdir -p www && cp index.html index.tsx types.ts metadata.json www/ && cp -r services public www/ && npx cap sync android",
+    "sync": "npx cap sync android"
+  }
+}
