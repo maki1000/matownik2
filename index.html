@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="manifest" href="./public/manifest.json" />
+    <link rel="manifest" href="public/manifest.json" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -16,18 +16,32 @@
         font-family: 'Inter', sans-serif;
         background-color: #f8fafc; /* slate-50 */
         -webkit-tap-highlight-color: transparent;
-        user-select: none;
+        margin: 0;
+        padding: 0;
+      }
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: white;
+      }
+      #root:empty::after {
+        content: "Ładowanie Matownika...";
+        font-weight: bold;
+        color: #2563eb;
+        font-size: 1.2rem;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
       }
       @media print {
         .no-print { display: none !important; }
         .print-only { display: block !important; }
         body { background-color: white; }
-      }
-      .print-only { display: none; }
-      
-      /* Smooth scrolling for mobile */
-      * {
-        -webkit-overflow-scrolling: touch;
       }
     </style>
     <script type="importmap">
@@ -42,15 +56,19 @@
       }
     }
     </script>
+    <!-- CRITICAL: Ładowanie głównego pliku aplikacji -->
+    <script type="module" src="index.tsx"></script>
   </head>
   <body>
     <div id="root"></div>
     <script>
+      // Poprawiona rejestracja Service Workera dla GitHub Pages
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./public/sw.js').catch(err => {
-            console.log('SW registration failed: ', err);
-          });
+          // Używamy ścieżki bez ./ na początku dla lepszej obsługi subdomen
+          navigator.serviceWorker.register('public/sw.js', { scope: './' })
+            .then(reg => console.log('Matownik SW Registered!'))
+            .catch(err => console.log('SW registration failed: ', err));
         });
       }
     </script>

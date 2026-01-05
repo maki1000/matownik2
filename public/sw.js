@@ -1,18 +1,17 @@
 
-const CACHE_NAME = 'matownik-v4-cache';
+const CACHE_NAME = 'matownik-v4.9-cache';
 const ASSETS = [
-  './',
-  './index.html',
-  './public/manifest.json',
+  'index.html',
+  'public/manifest.json',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-  'https://cdn-icons-png.flaticon.com/512/2921/2921226.png'
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
+      // Pobieramy tylko krytyczne zasoby, reszta wpadnie przy pierwszym użyciu
       return cache.addAll(ASSETS);
     })
   );
@@ -34,16 +33,13 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pomiń żądania chrome-extension i inne spoza http/https
   if (!(event.request.url.indexOf('http') === 0)) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+      if (cachedResponse) return cachedResponse;
+      
       return fetch(event.request).then((response) => {
-        // Nie cachuj jeśli odpowiedź nie jest poprawna
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
@@ -54,8 +50,10 @@ self.addEventListener('fetch', (event) => {
         return response;
       });
     }).catch(() => {
-      // Offline fallback
-      return caches.match('./index.html');
+      // Jeśli jesteśmy offline i nie ma w cache, zwróć główną stronę
+      if (event.request.mode === 'navigate') {
+        return caches.match('index.html');
+      }
     })
   );
 });
